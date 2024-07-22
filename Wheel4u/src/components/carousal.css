@@ -1,0 +1,13 @@
+img{
+    border-radius: 1rem;
+
+}
+p{
+    justify-content: center;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+.fw-bold {
+    font-weight: 700 !important;
+    color: black;
+}

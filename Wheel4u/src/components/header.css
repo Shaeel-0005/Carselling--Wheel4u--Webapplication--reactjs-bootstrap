@@ -1,0 +1,30 @@
+/* Header.css */
+
+.navbar-nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  li{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif ;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-right: 2rem;
+  }
+  a.nav-link.active{
+    font-family: 'mozilla';
+    font-size: 1rem;
+    font-weight: 700;
+    color: #F87629 !important;
+  }
+  .btn{
+    background-color: #F87629;
+    border: none;
+    border-radius: 8px;
+  }
+
+  .btn:hover{
+    background-color: #ee8447;
+    border: none;
+   
+  }
