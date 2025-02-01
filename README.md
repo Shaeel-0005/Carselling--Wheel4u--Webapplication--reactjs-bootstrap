@@ -17,3 +17,5 @@ Wheel4U is your one-stop shop for buying and selling cars. Whether you're a seas
    1. open in editor
    2. install node modules
    3. run and enjoy
+
+## ENJOY!
