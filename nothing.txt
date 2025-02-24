@@ -1,0 +1,1 @@
+this is nothing txt because i was just testing and practicing git and github from terminal of vs code
