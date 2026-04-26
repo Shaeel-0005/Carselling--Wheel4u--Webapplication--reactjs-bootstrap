@@ -1,58 +1,103 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./carousal.css"; // Optional for custom styles
-import { Carousel } from "react-bootstrap";
+import React, { useState, useEffect, useCallback } from 'react';
+import './crousal.css';
 
+const slides = [
+  {
+    image:
+      'https://images.unsplash.com/photo-1490902931801-d6f80ca94fe4?q=80&w=1470&auto=format&fit=crop',
+    label: "Islamabad's Premier Auto Marketplace",
+    titleLine1: 'CHOOSE YOUR',
+    titleAccent: 'STYLE.',
+    subtitle:
+      'Find your perfect car with transparent pricing and no hidden costs — every time.',
+    cta: { label: 'Explore Cars →', href: '/Products' },
+    ctaSecondary: { label: 'How It Works', href: '/about' },
+  },
+  {
+    image:
+      'https://images.unsplash.com/photo-1508974239320-0a029497e820?q=80&w=1470&auto=format&fit=crop',
+    label: 'Limited Time Offer',
+    titleLine1: 'GET UP TO',
+    titleAccent: '25% OFF.',
+    subtitle:
+      'Exclusive discounts on selected models this season. Drive home the deal.',
+    cta: { label: 'View Deals →', href: '/Products' },
+    ctaSecondary: { label: 'Contact Us', href: '/contact' },
+  },
+];
 
-const CarouselComponent = () => {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const banner1 ="https://images.unsplash.com/photo-1490902931801-d6f80ca94fe4?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-  const banner2 ="https://images.unsplash.com/photo-1508974239320-0a029497e820?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?";
-  const images = [banner1, banner2];
+const Carousel = () => {
+  const [current, setCurrent] = useState(0);
 
-  const handleSelect = (selectedIndex, event) => {
-    setCurrentIndex(selectedIndex);
-  };
+  const goTo = useCallback((index) => {
+    setCurrent((index + slides.length) % slides.length);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => goTo(current + 1), 5500);
+    return () => clearInterval(timer);
+  }, [current, goTo]);
 
   return (
-    <div className="container-fluid ps-5 pe-5 pb-3 pt-3 ">
-      <div className="row">
-        <div className="col">
-          <Carousel activeIndex={currentIndex} onSelect={handleSelect} style={{boxShadow:'none'}}>
-            {images.map((image, index) => (
-              <Carousel.Item key={index}>
-                <img
-                  className="d-block w-100"
-                  src={image}
-                  alt={`Slide ${index + 1}`}
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
-
-          <div className="container text-center pt-5 pb-5">
-            <div className="row">
-              <div className="col">
-                <div className="heading text-center">
-                  <h2 className="fw-bold "style={{fontFamily: '"PT Serif", serif ', color: "#00000"}}>CHOOSE YOUR STYLISH</h2>
-                  <h2 className="fw-bold " style={{ color: "#F87629",fontFamily: '"PT Serif", serif '}}>CAR AND GET DISCOUNT</h2>
-                </div>
-              </div>
-              <div className="col" style={{borderLeft:'1px solid #234234'}}> 
-                <p > 
-                  By following these steps and using the provided resources, you
-                  should be able to identify the reason why your images are not
-                  rendering in theBy following these steps and using the provided resources, you
-                  should be able to identify the reason why your images are not
-                  rendering in the
-                </p>
+    <div className="carousel-wrap">
+      <div
+        className="carousel-track"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
+        {slides.map((slide, i) => (
+          <div className="carousel-slide" key={i}>
+            <img src={slide.image} alt={`Slide ${i + 1}`} className="carousel-img" />
+            <div className="carousel-overlay" />
+            <div className="carousel-content">
+              <p className="carousel-label">{slide.label}</p>
+              <h1 className="carousel-title">
+                {slide.titleLine1}
+                <br />
+                <span className="carousel-title-accent">{slide.titleAccent}</span>
+              </h1>
+              <p className="carousel-subtitle">{slide.subtitle}</p>
+              <div className="carousel-ctas">
+                <a href={slide.cta.href} className="w4u-btn-primary">
+                  {slide.cta.label}
+                </a>
+                <a href={slide.ctaSecondary.href} className="w4u-btn-ghost">
+                  {slide.ctaSecondary.label}
+                </a>
               </div>
             </div>
           </div>
-        </div>
+        ))}
+      </div>
+
+      {/* Arrows */}
+      <button
+        className="carousel-arrow carousel-arrow--prev"
+        onClick={() => goTo(current - 1)}
+        aria-label="Previous slide"
+      >
+        ‹
+      </button>
+      <button
+        className="carousel-arrow carousel-arrow--next"
+        onClick={() => goTo(current + 1)}
+        aria-label="Next slide"
+      >
+        ›
+      </button>
+
+      {/* Dot indicators */}
+      <div className="carousel-dots">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            className={`carousel-dot${i === current ? ' carousel-dot--active' : ''}`}
+            onClick={() => goTo(i)}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
     </div>
   );
 };
 
-export default CarouselComponent;
+export default Carousel;

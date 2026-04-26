@@ -1,61 +1,70 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../Redux/auth/loginSlice';
+import { apiUrl, parseJsonResponse } from '../utils/api';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isLoggedIn, username } = useSelector(state => state.auth);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const { email, password } = formData;
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
 
     if (!email || !password) {
       alert('Email and password are required');
       return;
     }
 
-    fetch('http://localhost/Wheel4u_api/login.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.success) {
-          alert('Login successful!');
-          dispatch(login({ username: data.username, isLoggedIn: true })); 
-          if (data.role === 'buyer') {
-            // Navigate to buyer dashboard or home page
-            {console.log(username)}
-          } else if (data.role === 'seller') {
-            // Navigate to seller dashboard
-          }
-        } else {
-          alert('Login failed: ' + data.message);
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Network error occurred. Please try again later.');
+    setErrorMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(apiUrl('login.php'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
       });
+
+      const data = await parseJsonResponse(response);
+
+      if (!data.success) {
+        throw new Error(data.message || 'Login failed.');
+      }
+
+      const username = data.username || email;
+
+      dispatch(login({ username }));
+      localStorage.setItem('name', username);
+      alert('Login successful!');
+
+      if (data.role === 'seller') {
+        navigate('/seller_dashboard');
+      } else {
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,6 +73,11 @@ const LoginPage = () => {
         <div className="card-body">
           <h2 className="card-title text-center mb-4">Login</h2>
           <form onSubmit={handleSubmit}>
+            {errorMessage && (
+              <div className="alert alert-danger" role="alert">
+                {errorMessage}
+              </div>
+            )}
             <div className="mb-3">
               <label htmlFor="email" className="form-label">Email</label>
               <input type="email" className="form-control" id="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
@@ -72,7 +86,9 @@ const LoginPage = () => {
               <label htmlFor="password" className="form-label">Password</label>
               <input type="password" className="form-control" id="password" name="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} required />
             </div>
-            <button type="submit" className="btn btn-primary w-100">Login</button>
+            <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
+              {isSubmitting ? 'Signing in...' : 'Login'}
+            </button>
             <a href='/signup'><button type="button" className="btn btn-secondary w-100 mt-2">Signup</button></a>
           </form>
         </div>

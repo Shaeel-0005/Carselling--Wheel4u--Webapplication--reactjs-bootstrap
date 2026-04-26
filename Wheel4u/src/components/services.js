@@ -1,31 +1,52 @@
-import React from 'react'
+import React from 'react';
+import './services.css';
 
-export default function services() {
+const servicePills = [
+  'Buy & Sell',
+  'Inspection Reports',
+  'Price Valuation',
+  'Financing',
+  'Documentation',
+];
+
+const Services = () => {
   return (
-    <div>
-       <section className="hero px-5">
-        <div className="row align-items-center">
-        <div className="col-md-6 mt-5">
-          <img src="https://images.unsplash.com/photo-1485463611174-f302f6a5c1c9?q=80&w=1476&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Used Car Dealership" className="img-fluid" />
-          </div>
-          <div className="col-md-6">
-            <h1 className='mx-4 fw-bold' style={{color:'#F87629'}}>Our Services</h1>
-            <p>Your trusted Islamabad-based marketplace for buying and selling dream cars.We
-          believe everyone deserves a smooth and transparent journey to find their
-          perfect car.Your trusted Islamabad-based marketplace for buying and selling dream cars.We
-          believe everyone deserves a smooth and transparent journey to find their
-          perfect car.Your trusted Islamabad-based marketplace for buying and selling dream cars.We
-          believe everyone deserves a smooth and transparent journey to find their
-          perfect car.Your trusted Islamabad-based marketplace for buying and selling dream cars.We
-          believe everyone deservesed marketplace for buying and selling dream cars.We
-          believe everyone deserves a smooth and transparent journey to find their
-          perfect car.</p>
-            <a href='/Products 'className='mx-4'><button className="btn btn-primary">Explore Cars</button></a>
-            
-          </div>
-          
+    <section className="services-section">
+      {/* Left: image */}
+      <div className="services-image-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1485463611174-f302f6a5c1c9?q=80&w=1476&auto=format&fit=crop"
+          alt="Car dealership"
+          className="services-image"
+        />
+        <div className="services-image-fade" />
+      </div>
+
+      {/* Right: content */}
+      <div className="services-content">
+        <p className="w4u-eyebrow">What we offer</p>
+        <h2 className="services-title">
+          OUR<br />SERVICES
+        </h2>
+        <p className="services-body">
+          Your trusted Islamabad-based marketplace for buying and selling dream
+          cars. We believe everyone deserves a smooth, transparent journey to
+          find their perfect vehicle — with zero hidden costs and full peace of
+          mind.
+        </p>
+
+        <div className="services-pills">
+          {servicePills.map((pill, i) => (
+            <span className="services-pill" key={i}>{pill}</span>
+          ))}
         </div>
-      </section>
-    </div>
-  )
-}
+
+        <a href="/Products" className="w4u-btn-primary">
+          Explore Cars →
+        </a>
+      </div>
+    </section>
+  );
+};
+
+export default Services;

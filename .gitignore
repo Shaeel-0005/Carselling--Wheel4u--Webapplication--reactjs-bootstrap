@@ -1,0 +1,28 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+build/
+dist/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+.vscode/
+.project
+.settings/
+
+# dotenv environment variables file
+.env
+
+# Optional: exclude any other specific files or directories like:
+# .history/
+# .cache/

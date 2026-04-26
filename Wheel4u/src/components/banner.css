@@ -1,6 +1,49 @@
-h2{
-color: aliceblue;
+/* ── Stats Banner ── */
+.banner-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+  background: var(--dark2);
 }
-.banner{
-    background-color: #302f2e;
+
+.banner-stat {
+  padding: 28px 36px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.2s;
+}
+.banner-stat:last-child { border-right: none; }
+.banner-stat:hover { background: var(--dark3); }
+
+.banner-stat__value {
+  font-family: var(--font-display);
+  font-size: 40px;
+  color: var(--orange);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.banner-stat__label {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--font-body);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .banner-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .banner-stat:nth-child(2) { border-right: none; }
+  .banner-stat:nth-child(3) { border-top: 1px solid var(--border); }
+  .banner-stat:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+}
+
+@media (max-width: 480px) {
+  .banner-strip { grid-template-columns: 1fr; }
+  .banner-stat { border-right: none !important; }
 }

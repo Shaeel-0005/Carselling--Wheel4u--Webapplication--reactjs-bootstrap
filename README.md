@@ -16,6 +16,8 @@ Wheel4U is your one-stop shop for buying and selling cars. Whether you're a seas
 2.# fronend(Wheel4u):
    1. open in editor
    2. install node modules
-   3. run and enjoy
+   3. optionally create `Wheel4u/.env` from `.env.example` and set `REACT_APP_API_BASE_URL`
+   4. make sure it points to your PHP backend, for example `http://localhost/Wheel4u_api`
+   5. run and enjoy
 
 ## ENJOY!

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import Products from './pages/products';
 import Testimonials from './pages/about';
 import Home from './pages/home';
@@ -19,7 +18,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'tailwindcss/tailwind.css';
 
 const App = () => {
-  const [cartItems, setCartItems] = React.useState([]);
   const dispatch = useDispatch();
   const { isLoggedIn, username } = useSelector((state) => state.auth);
   const location = useLocation();
@@ -31,20 +29,6 @@ const App = () => {
       dispatch(login({ username: storedUsername }));
     }
   }, [dispatch]);
-
-  const handleLogin = async (email, password) => {
-    try {
-      const response = await axios.post('http://localhost/Wheel4u_api/login.php', { email, password });
-      if (response.data.success) {
-        dispatch(login({ username: response.data.username }));
-        localStorage.setItem('name', response.data.username);
-      } else {
-        alert(response.data.message); // Display error message
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-    }
-  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -73,7 +57,7 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/testimonials" element={<Testimonials />} />
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/seller_dashboard" element={<Sel_Dashborad />} />
         <Route path="*" element={<Nopage />} />

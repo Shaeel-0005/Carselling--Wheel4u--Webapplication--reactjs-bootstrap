@@ -1,45 +1,66 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiUrl, parseJsonResponse } from '../utils/api';
+
+const initialFormData = {
+  name: '',
+  phone: '',
+  cnic: '',
+  address: '',
+  email: '',
+  password: '',
+  role: 'buyer'
+};
 
 const SignupPage = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    cnic: '',
-    address: '',
-    email: '',
-    password: '',
-    role: 'buyer'
-  });
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialFormData);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log('Form Data:', formData); // Check if formData is correctly populated
+    const payload = {
+      ...formData,
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      cnic: formData.cnic.trim(),
+      address: formData.address.trim(),
+      email: formData.email.trim().toLowerCase()
+    };
 
-    fetch('http://localhost/Wheel4u_api/insert_data.php?table=users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(response => {
-        console.log('Response:', response); // Check the fetch response
-        return response.json();
-      })
-      .then(data => {
-        console.log('Data:', data); // Check the parsed JSON data
-        if (data.success) {
-          alert('User registered successfully!');
-        } else {
-          alert('Error registering user: ' + data.message);
-        }
-      })
-      .catch(error => console.error('Error:', error));
+    setErrorMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(apiUrl('insert_data.php?table=users'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await parseJsonResponse(response);
+
+      if (!data.success) {
+        throw new Error(data.message || 'Unable to register user.');
+      }
+
+      setFormData(initialFormData);
+      alert(data.message || 'User registered successfully!');
+      navigate('/login');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrorMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -48,6 +69,11 @@ const SignupPage = () => {
         <div className="card-body">
           <h2 className="card-title text-center mb-4">Signup</h2>
           <form onSubmit={handleSubmit}>
+            {errorMessage && (
+              <div className="alert alert-danger" role="alert">
+                {errorMessage}
+              </div>
+            )}
             <div className="mb-3">
               <label htmlFor="name" className="form-label">Name</label>
               <input type="text" className="form-control" id="name" name="name" placeholder="Enter your name" value={formData.name} onChange={handleChange} required />
@@ -79,7 +105,9 @@ const SignupPage = () => {
                 <option value="seller">Seller</option>
               </select>
             </div>
-            <button type="submit" className="btn btn-primary w-100">Signup</button>
+            <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating account...' : 'Signup'}
+            </button>
           </form>
         </div>
       </div>

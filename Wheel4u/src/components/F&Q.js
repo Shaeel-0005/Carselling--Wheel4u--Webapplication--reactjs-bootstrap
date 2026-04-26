@@ -1,63 +1,85 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+import React, { useState } from 'react';
+import './faq.css';
 
 const faqs = [
   {
     question: 'What is the return policy?',
-    answer: 'Our return policy allows for returns within 30 days of purchase. Please ensure items are in their original condition and packaging.',
+    answer:
+      'Our return policy allows for returns within 30 days of purchase. Please ensure items are in their original condition and packaging.',
   },
   {
     question: 'How do I track my order?',
-    answer: 'Once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website.',
+    answer:
+      'Once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website.',
   },
   {
     question: 'Do you offer international shipping?',
-    answer: 'Yes, we offer international shipping. Shipping costs and delivery times vary depending on the destination.',
+    answer:
+      'Yes, we offer international shipping. Shipping costs and delivery times vary depending on the destination country.',
   },
   {
     question: 'How can I contact customer support?',
-    answer: 'You can contact our customer support team via email at support@example.com or by phone at (123) 456-7890.',
+    answer:
+      'You can contact our customer support team via email at support@wheel4u.pk or by phone at (051) 234-5678 during business hours.',
   },
-  // Add more FAQs as needed
+  {
+    question: 'Are all listed cars inspected before sale?',
+    answer:
+      'Every car on our platform goes through a multi-point inspection by certified mechanics. Inspection reports are available on every listing page.',
+  },
 ];
 
-export default function FAQSection() {
+const FAQSection = () => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggle = (i) => setOpenIndex(openIndex === i ? null : i);
+
   return (
-   
-    <div className="bg-light py-5">
-        <h2 style={{color:'black',textAlign:'center',alignSelf:'center'}}>F&Qs Section</h2>
-      <div className="container text-center">
-        <h2 className="mb-4" style={{color:'#F87629'}}>Frequently Asked Questions</h2>
-        <div className="accordion" id="faqAccordion">
-          {faqs.map((faq, index) => (
-            <div key={index} className="accordion-item">
-              <h2 className="accordion-header" id={`heading${index}`}>
-                <button
-                  className="accordion-button"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target={`#collapse${index}`}
-                  aria-expanded="true"
-                  aria-controls={`collapse${index}`}
-                >
-                  {faq.question}
-                </button>
-              </h2>
-              <div
-                id={`collapse${index}`}
-                className="accordion-collapse collapse"
-                aria-labelledby={`heading${index}`}
-                data-bs-parent="#faqAccordion"
+    <section className="faq-section">
+      {/* Left column */}
+      <div className="faq-left">
+        <p className="w4u-eyebrow">Got questions?</p>
+        <h2 className="faq-headline">
+          NEED<br />ANSWERS<br />
+          <span className="faq-headline__accent">FAST?</span>
+        </h2>
+        <p className="faq-intro">
+          Everything you need to know about buying, selling, and everything
+          in between. Can't find what you need? Reach out directly.
+        </p>
+        <a href="mailto:support@wheel4u.pk" className="w4u-btn-primary">
+          Email Support →
+        </a>
+      </div>
+
+      {/* Right column — accordion */}
+      <div className="faq-right">
+        {faqs.map((faq, i) => {
+          const isOpen = openIndex === i;
+          return (
+            <div className={`faq-item${isOpen ? ' faq-item--open' : ''}`} key={i}>
+              <button
+                className="faq-question"
+                onClick={() => toggle(i)}
+                aria-expanded={isOpen}
               >
-                <div className="accordion-body">
-                  {faq.answer}
-                </div>
+                <span>{faq.question}</span>
+                <span className="faq-icon" aria-hidden="true">
+                  {isOpen ? '×' : '+'}
+                </span>
+              </button>
+              <div
+                className="faq-answer"
+                style={{ maxHeight: isOpen ? '300px' : '0' }}
+              >
+                <p className="faq-answer__text">{faq.answer}</p>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default FAQSection;

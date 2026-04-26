@@ -1,58 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './homeproducts.css';
 
 const Products = ({ addToCart }) => {
   const [data, setData] = useState([]);
-  const tableName = 'products';
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
-      .get(`http://localhost/Wheel4u_api/fetch_data.php?table=${tableName}`)
+      .get('http://localhost/Wheel4u_api/fetch_data.php?table=products')
       .then((response) => {
-        const sortedData = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        const latestData = sortedData.slice(0, 4);
-        setData(latestData);
+        const sorted = response.data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setData(sorted.slice(0, 4));
+        setLoading(false);
       })
-      .catch((error) => {
-        console.error('There was an error fetching the data!', error);
+      .catch((err) => {
+        console.error('Error fetching products:', err);
+        setLoading(false);
       });
   }, []);
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    if (addToCart) addToCart(product);
   };
 
   return (
-    <div className="bg-white mt-5">
-      <div className="container py-5">
-        <h2 className='sr-only mx-4 fw-bold' style={{color:'black'}}>Products</h2>
-        <div className="row ">
+    <section className="products-section">
+      {/* Header */}
+      <div className="products-header">
+        <div>
+          <p className="w4u-eyebrow">Fresh arrivals</p>
+          <h2 className="products-title">LATEST LISTINGS</h2>
+        </div>
+        <a href="/Products" className="products-view-all">
+          View All →
+        </a>
+      </div>
+
+      {/* Grid */}
+      {loading ? (
+        <div className="products-loading">
+          <div className="products-loading__spinner" />
+          <p>Loading listings…</p>
+        </div>
+      ) : (
+        <div className="products-grid">
           {data.map((product) => (
-            <div key={product.id} className="col-sm-6 col-lg-3 mb-4 mt-3">
-              <div className="card h-100">
+            <div className="product-card" key={product.id}>
+              <div className="product-card__img-wrap">
                 <img
                   src={product.image_path}
-                  className="card-img-top"
-                  alt={product.description}
+                  alt={product.name}
+                  className="product-card__img"
                 />
-                <div className="card-body">
-                <h5 className="card-title">{product.name}</h5>
-                  <p className="card-text p-0">Rs.{product.description}</p>
-                  <p className="card-text p-0 fw-bold">Rs.{product.price}</p>
+              </div>
+              <div className="product-card__body">
+                <p className="product-card__tag">Featured</p>
+                <h3 className="product-card__name">{product.name}</h3>
+                <p className="product-card__desc">{product.description}</p>
+                <div className="product-card__footer">
+                  <span className="product-card__price">
+                    Rs. {Number(product.price).toLocaleString()}
+                  </span>
                   <button
-                    className="btn btn-primary"
+                    className="product-card__cart-btn"
                     onClick={() => handleAddToCart(product)}
+                    aria-label={`Add ${product.name} to cart`}
                   >
-                    Add to Cart
+                    +
                   </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+    </section>
   );
 };
 
