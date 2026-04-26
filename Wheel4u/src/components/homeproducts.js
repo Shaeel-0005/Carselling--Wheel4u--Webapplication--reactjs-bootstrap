@@ -1,49 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './homeproducts.css';
+import { apiUrl } from '../utils/api';
+import { mockProducts, sortProductsByDate } from '../data/mockProducts';
 
 const Products = ({ addToCart }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
 
   useEffect(() => {
     axios
-      .get('http://localhost/Wheel4u_api/fetch_data.php?table=products')
+      .get(apiUrl('fetch_data.php?table=products'))
       .then((response) => {
-        const sorted = response.data.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        setData(sorted.slice(0, 4));
+        const products = Array.isArray(response.data) ? response.data : [];
+
+        if (products.length === 0) {
+          setData(sortProductsByDate(mockProducts).slice(0, 4));
+          setIsUsingFallback(true);
+          setLoading(false);
+          return;
+        }
+
+        setData(sortProductsByDate(products).slice(0, 4));
+        setIsUsingFallback(false);
         setLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching products:', err);
+        setData(sortProductsByDate(mockProducts).slice(0, 4));
+        setIsUsingFallback(true);
         setLoading(false);
       });
   }, []);
 
   const handleAddToCart = (product) => {
-    if (addToCart) addToCart(product);
+    if (addToCart) {
+      addToCart(product);
+    }
   };
 
   return (
     <section className="products-section">
-      {/* Header */}
       <div className="products-header">
         <div>
           <p className="w4u-eyebrow">Fresh arrivals</p>
           <h2 className="products-title">LATEST LISTINGS</h2>
+          {isUsingFallback && (
+            <p className="mb-0 text-muted">Demo products are currently being shown.</p>
+          )}
         </div>
         <a href="/Products" className="products-view-all">
-          View All →
+          View All ->
         </a>
       </div>
 
-      {/* Grid */}
       {loading ? (
         <div className="products-loading">
           <div className="products-loading__spinner" />
-          <p>Loading listings…</p>
+          <p>Loading listings...</p>
         </div>
       ) : (
         <div className="products-grid">
