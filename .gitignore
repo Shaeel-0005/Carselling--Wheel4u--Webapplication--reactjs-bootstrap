@@ -24,5 +24,8 @@ Thumbs.db
 .env
 
 # Optional: exclude any other specific files or directories like:
-# .history/
-# .cache/
+.history/
+.cache/
+
+# Exclude backend directory that doesn't work on Vercel
+Wheel4u_api/
